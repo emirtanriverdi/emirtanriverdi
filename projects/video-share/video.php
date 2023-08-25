@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Video Player</h1>
           <video
     id="my-video"
-    class="video-js"
+    class="video-js vjs-fluid"
     controls
     preload="auto"
     data-setup="{}"
