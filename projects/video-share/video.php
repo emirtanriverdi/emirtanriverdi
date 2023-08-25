@@ -9,8 +9,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $videoTitle = $_POST['videoTitle'];
     $videoTitle = $conn->real_escape_string($videoTitle);
 
-    if ($_FILES['videoFile']['type'] === 'video/mp4' && $_FILES['videoFile']['size'] <= 50 * 1024 * 1024) {
-        if (move_uploaded_file($_FILES['videoFile']['tmp_name'], $targetFile)) {
+    $videoDescription = $_POST['videoDescription'];
+    $videoDescription = $conn->real_escape_string($videoDescription);
+
+    $imageFile = $_FILES['imageFile'];
+
+    $targetImageDir = 'images/';
+    $imageName = hash('sha256', uniqid());
+    $imageExtension = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
+    $targetImageFile = $targetImageDir . $imageName . '.' . $imageExtension;
+
+    if (
+        $_FILES['videoFile']['type'] === 'video/mp4' &&
+        $_FILES['videoFile']['size'] <= 50 * 1024 * 1024 &&
+        in_array($imageExtension, array('jpg', 'jpeg', 'png'))
+    ) {
+        if (
+            move_uploaded_file($_FILES['videoFile']['tmp_name'], $targetFile) &&
+            move_uploaded_file($imageFile['tmp_name'], $targetImageFile)
+        ) {
             $randomFolder = substr(md5(uniqid()), 0, 5);
             mkdir($randomFolder);
 
@@ -21,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Video Watch</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.emirtanriverdi.rf.gd/videojs.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.emirtanriverdi.rf.gd/bootstrap.css">
-    <link rel="icon" href="https://cdn.emirtanriverdi.rf.gd/main-favicon.png">
+    <link href="../cdn/videojs.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../cdn/bootstrap.css">
+    <link rel="icon" href="">
     <style>
         .video-title {
         font-family: "Roboto", sans-serif;
@@ -37,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Video Player</h1>
           <video
     id="my-video"
-    class="video-js"
+    class="video-js vjs-16-9"
     controls
     preload="auto"
     data-setup="{}"
@@ -53,21 +70,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </video>
         <br>
         <strong class="video-title">' . $videoTitle . '</strong><br>
+        <p class="video-description">' . $videoDescription . '</p><br>
         <a href="../"><button class="btn btn-dark btn-sm">Homepage</button></a>
     </div>
-    <script src="https://cdn.emirtanriverdi.rf.gd/videojs.js"></script>
+    <script src="../cdn/videojs.js"></script>
 </body>
 </html>';
 
             file_put_contents($randomFolder . '/index.html', $indexHtmlContent);
 
             $videoUrl = $randomFolder . '';
-            $sql = "INSERT INTO videos (url, title) VALUES ('$videoUrl', '$videoTitle')";
+            $sql = "INSERT INTO videos (url, title, description, image) VALUES ('$videoUrl', '$videoTitle', '$videoDescription', '$targetImageFile')";
 
             if ($conn->query($sql) === TRUE) {
                 echo 'Video uploaded and processed. <a href="' . $randomFolder . '" target="_blank">Watch Video</a>';
             } else {
-                echo 'Error inserting video URL into the database: ' . $conn->error;
+                echo 'Error inserting video URL into the database.';
             }
 
             $conn->close();
@@ -75,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo 'There was an error loading the file.';
         }
     } else {
-        echo 'Please select a valid .mp4 file (maximum 50MB).';
+        echo 'Please select a valid .mp4 file (maximum 50MB) and a valid image file (jpg, jpeg, png, gif).';
     }
 } else {
     echo 'Incorrect request.';

@@ -3,15 +3,19 @@
 <head>
     <title>Video Upload</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.emirtanriverdi.rf.gd/bootstrap.css">
-    <link rel="icon" href="https://cdn.emirtanriverdi.rf.gd/main-favicon.png">
+    <link rel="stylesheet" href="cdn/bootstrap.css">
+    <link rel="icon" href="">
 </head>
 <body>
     <div class="container mt-5">
         <h1>Video Upload and Watch</h1>
         <form id="uploadForm" enctype="multipart/form-data">
+        <h3>Video File</h3>
             <input type="file" name="videoFile" accept=".mp4"><br><br>
-            <input type="text" name="videoTitle" placeholder="Enter Video Title" required><br>
+        <h3>Video Cover İmage</h3>
+            <input type="file" name="imageFile" accept="image/*"><br><br>
+            <input type="text" name="videoTitle" placeholder="Enter Video Title" required><br><br>
+            <input type="text" name="videoDescription" placeholder="Enter Video Description" required><br>
             <button type="submit" class="btn btn-primary mt-3">Upload</button>
             <div class="progress mt-3" style="display:none;">
                 <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
@@ -21,7 +25,7 @@
         <a href="./"><button class="btn btn-dark btn-sm">Homepage</button></a>
     </div>
 
-    <script src="https://cdn.emirtanriverdi.rf.gd/jquery.js"></script>
+    <script src="cdn/jquery.js"></script>
     <script>
         $(document).ready(function() {
             $('#uploadForm').on('submit', function(event) {

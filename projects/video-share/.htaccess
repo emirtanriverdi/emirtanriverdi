@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^upload$ upload.php [L]
+RewriteRule ^video$ video.php [L]
